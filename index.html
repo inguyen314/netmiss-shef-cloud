@@ -1,41 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <script>
     // Create a URL object with the current page URL
     const urlParams = new URLSearchParams(window.location.search);
 
-    urlParams.forEach(function (value, key) {
-        console.log(key, value);
-    });
+    var office = urlParams.get('office') || 'MVS';
+    console.log('office: ', office);
 
-    var selectedBasin = urlParams.get('basin');
-    console.log('selectedBasin: ', selectedBasin);
+    // Calculate the document root
+    const documentRoot = window.location.protocol + "//" + window.location.host + "/";
 
-    var basin = urlParams.get('basin');
-    console.log('basin: ', basin);
+    // Determine the default value of cda based on documentRoot
+    const cdaDefault = (documentRoot === `https://wm.${office.toLocaleLowerCase()}.ds.usace.army.mil/`) ? "internal" : "public";
+    // console.log("cdaDefault: ", cdaDefault);
 
-    var type = urlParams.get('type');
-    console.log('type: ', type);
-
-    var cda = urlParams.get('cda');
+    // Get the value of a specific parameter
+    var cda = urlParams.get('cda') || cdaDefault;
     console.log('cda: ', cda);
 
-    var office = urlParams.get('office');
-    console.log('office: ', office);
+    var type = urlParams.get('type') || null;
+    console.log('type: ', type);
+
+    var type_flow = urlParams.get('type_flow');
+    console.log('type_flow: ', type_flow);
+
+    var basin = urlParams.get('basin') || null;
+    console.log('basin: ', basin);
+
+    var gage = urlParams.get('gage') || null;
+    console.log('gage: ', gage);
+
+    var gage_2 = urlParams.get('gage_2') || null;
+    console.log('gage_2: ', gage_2);
+
+    var begin = urlParams.get('begin') || null;
+    console.log('begin: ', begin);
+
+    var end = urlParams.get('end') || null;
+    console.log('end: ', end);
+
+    var begin_2 = urlParams.get('begin_2') || null;
+    console.log('begin_2: ', begin_2);
+
+    var end_2 = urlParams.get('end_2') || null;
+    console.log('end_2: ', end_2);
+
+    var top10 = urlParams.get('top10') || null;
+    console.log('top10: ', top10);
+
+    var version_id = urlParams.get('version_id') || null;
+    console.log('version_id: ', version_id);
+
+    var template_id = urlParams.get('template_id') || null;
+    console.log('template_id: ', template_id);
 </script>
-<!DOCTYPE html>
-<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
+    <title>Netmiss Shef</title>
     <meta name="Description" content="U.S. Army Corps of Engineers St. Louis District Home Page" />
     <link rel="stylesheet" href="css/body.css" />
     <link rel="stylesheet" href="css/breadcrumbs.css" />
     <link rel="stylesheet" href="css/jumpMenu.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
     <link rel="stylesheet" href="css/style.css" />
-    <script type="text/javascript" src="js/main.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/moment-timezone-with-data.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/chartjs-adapter-moment.min.js"></script>
 </head>
 
 <body>
@@ -52,22 +88,22 @@
                     <div id="topPane" class="col-md backend-cp-collapsible">
                         <div class="box-usace">
                             <h2 class="box-header-striped">
-                                <span class="titleLabel title">Title</span>
+                                <span class="titleLabel title">Netmiss Shef</span>
                                 <span class="rss"></span>
                             </h2>
                             <div class="box-content" style="background-color:white;margin:auto">
                                 <div class="content">
+                                    <!-- Start Div -->
+                                    <div id="loading" style="display: none;"><img src="images/loading4.gif"
+                                            style='height: 50px; width: 50px;' alt="Loading..." /></div>
+                                    <div id="table_container"></div>
+                                    <script src="netmiss_shef.js"></script>
+                                    <!-- End Div -->
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Start Div -->
-                <div id="loading_netmiss_shef" style="display: none;"><img src="images/loading4.gif"
-                        style='height: 50px; width: 50px;' alt="Loading..." /></div>
-                <div id="table_container_netmiss_shef"></div>
-                <script src="netmiss_shef.js"></script>
-                <!-- End Div -->
             </div>
             <button id="returnTop" title="Return to Top of Page">Top</button>
         </div>
