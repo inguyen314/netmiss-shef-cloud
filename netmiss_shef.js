@@ -430,14 +430,17 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
                 const stageTime = formatDate(location.stageDataPreferredTimes[0].values[0]['time']);
 
+                // const logTheLocation = `********* ${locationId}`;
+                const logTheLocation = ``;
+
                 // Create a span element and append the data
                 const span = document.createElement('span');
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ${logTheLocation}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ${logTheLocation}`;
                 } else {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ${logTheLocation}`;
                 }
                 // Append the span to the container
                 container.appendChild(span);
@@ -462,14 +465,17 @@ document.addEventListener('DOMContentLoaded', async function () {
                     .join('/'); // Join the values with a forward slash
                 const locationId = location["location-id"];
 
+                // const logTheLocation = `********* ${locationId}`;
+                const logTheLocation = ``;
+
                 // Create a span element and append the data
                 const span = document.createElement('span');
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 } else {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 }
                 // Append the span to the container
                 container.appendChild(span);
@@ -518,15 +524,18 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const nws = location["NWS"];
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
-                const stageTime = formatDate(location.stageData.values[0][0]);
+                const stageTime = formatDate(location.stageDataPreferredTimes[0].values[0]['time']);
+
+                // const logTheLocation = `********* ${locationId}`;
+                const logTheLocation = ``;
 
                 let paragraphText = '';
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ********* ${locationId}`;
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ${logTheLocation}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ********* ${locationId}`;
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ${logTheLocation}`;
                 } else {
-                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ********* ${locationId}`;
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ${logTheLocation}`;
                 }
 
                 paragraphsData.push(paragraphText);
@@ -546,13 +555,16 @@ document.addEventListener('DOMContentLoaded', async function () {
                     .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
                     .join('/'); // Join the values with a forward slash
 
+                // const logTheLocation = `********* ${locationId}`;
+                const logTheLocation = ``;
+
                 let netmissText = '';
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 } else {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ${logTheLocation}`;
                 }
 
                 paragraphsData.push(netmissText);
