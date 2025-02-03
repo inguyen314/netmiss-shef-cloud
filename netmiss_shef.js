@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     // console.log('currentDateTime:', currentDateTime);
 
     // Subtract thirty hours from current date and time
-    const currentDateTimeMinus30Hours = subtractHoursFromDate(currentDateTime, 23);
+    const currentDateTimeMinus30Hours = subtractHoursFromDate(currentDateTime, 30);
     // console.log('currentDateTimeMinus30Hours :', currentDateTimeMinus30Hours);
 
     // Subtract thirty hours from current date and time
-    const currentDateTimeMinus00Hours = subtractHoursFromDate(currentDateTime, 24);
+    const currentDateTimeMinus00Hours = subtractHoursFromDate(currentDateTime, 0);
     // console.log('currentDateTimeMinus30Hours :', currentDateTimeMinus30Hours);
 
     const currentDateTimePlus168Hours = addHoursFromDate(currentDateTime, 190);
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                             if (basinData['assigned-locations']) {
                                 basinData['assigned-locations'].forEach(loc => {
 
-                                    let netmissTsidApiUrl = setBaseUrl + `timeseries/group/Netmiss-Comparison?office=${office}&category-id=${loc['location-id']}`;
+                                    let netmissTsidApiUrl = setBaseUrl + `timeseries/group/Stage?office=${office}&category-id=${loc['location-id']}`;
                                     if (netmissTsidApiUrl) {
                                         netmissTsidPromises.push(
                                             fetch(netmissTsidApiUrl)
@@ -108,10 +108,17 @@ document.addEventListener('DOMContentLoaded', async function () {
                                                     // Extract the dynamic part from time-series-category
                                                     let dynamicId = netmissTsidData['time-series-category']['id'];
 
-                                                    // Create the new timeseries-id dynamically
-                                                    let newTimeseriesId = `${dynamicId}.Stage.Inst.~1Day.0.netmiss-fcst`;
+                                                    // Create the new timeseries-ids dynamically
+                                                    let newTimeseriesId = null;
 
-                                                    // New object to append
+                                                    console.log(loc['location-id']);
+
+                                                    if (dynamicId === "LD 24 Pool-Mississippi" || dynamicId === "LD 25 Pool-Mississippi" || dynamicId === "Mel Price Pool-Mississippi") {
+                                                        newTimeseriesId = `${dynamicId}.Elev.Inst.~1Day.0.netmiss-fcst`;
+                                                    } else {
+                                                        newTimeseriesId = `${dynamicId}.Stage.Inst.~1Day.0.netmiss-fcst`;
+                                                    }
+                                                    // New object to append for the first timeseries-id
                                                     let newAssignedTimeSeries = {
                                                         "office-id": "MVS",
                                                         "timeseries-id": newTimeseriesId, // Use dynamic timeseries-id
@@ -119,8 +126,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                                                         "attribute": 2
                                                     };
 
-                                                    // Append the new object to assigned-time-series
+                                                    // Append both new objects to assigned-time-series
                                                     netmissTsidData['assigned-time-series'].push(newAssignedTimeSeries);
+
                                                     // console.log("netmissTsidData: ", netmissTsidData);
 
                                                     if (netmissTsidData) {
@@ -131,6 +139,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                                                     console.error(`Problem with the fetch operation for stage TSID data at ${netmissTsidApiUrl}:`, error);
                                                 })
                                         );
+                                    } else {
+
                                     }
 
                                     if ("metadata" === "metadata") {
@@ -198,81 +208,60 @@ document.addEventListener('DOMContentLoaded', async function () {
                     const additionalPromises = [];
 
                     for (const locData of combinedData[0][`assigned-locations`]) {
-                        const stageTsid = locData[`tsid-netmiss`][`assigned-time-series`][0][`timeseries-id`];
-                        const netmissTsid = locData[`tsid-netmiss`][`assigned-time-series`][1][`timeseries-id`];
-                        const nwsTsid = locData[`tsid-netmiss`][`assigned-time-series`][2][`timeseries-id`];
+                        const assignedTimeSeries = locData[`tsid-netmiss`] && locData[`tsid-netmiss`][`assigned-time-series`];
 
-                        // Example API calls for additional data (customize these URLs)
-                        const stageApiUrl = setBaseUrl + `timeseries?name=${stageTsid}&begin=${currentDateTimeMinus30Hours.toISOString()}&end=${currentDateTimeMinus00Hours.toISOString()}&office=${office}`;
-                        const netmissApiUrl = setBaseUrl + `timeseries?name=${netmissTsid}&begin=${currentDateTimeMinus00Hours.toISOString()}&end=${currentDateTimePlus168Hours.toISOString()}&office=${office}`;
-                        const nwsApiUrl = setBaseUrl + `timeseries?name=${nwsTsid}&begin=${currentDateTimeMinus00Hours.toISOString()}&end=${currentDateTimePlus168Hours.toISOString()}&office=${office}`;
+                        let stageTsid = null;
+                        let netmissTsid = null;
+                        let stageApiUrl = null;
+                        let netmissApiUrl = null;
 
-                        // Fetch additional data
-                        additionalPromises.push(
-                            Promise.all([
-                                fetch(stageApiUrl, {
-                                    method: 'GET',
-                                    headers: {
-                                        'Accept': 'application/json;version=2'
-                                    }
-                                }).then(res => res.json()),
-                                fetch(netmissApiUrl, {
-                                    method: 'GET',
-                                    headers: {
-                                        'Accept': 'application/json;version=2'
-                                    }
-                                }).then(res => res.json()),
-                                fetch(nwsApiUrl, {
-                                    method: 'GET',
-                                    headers: {
-                                        'Accept': 'application/json;version=2'
-                                    }
-                                }).then(res => res.json())
-                            ])
-                                .then(([stageData, netmissData, nwsData]) => {
-                                    // console.log('stageData:', stageData);
-                                    // console.log('netmissData:', netmissData);
-                                    // console.log('nwsData:', nwsData);
+                        if (assignedTimeSeries && assignedTimeSeries.length == 2) {
+                            stageTsid = assignedTimeSeries[0][`timeseries-id`];
+                            netmissTsid = assignedTimeSeries[1][`timeseries-id`];
 
-                                    if (stageData.values) {
-                                        stageData.values.forEach(entry => {
-                                            entry[0] = formatNWSDate(entry[0]);
-                                        });
-                                    }
+                            // Example API calls for additional data (customize these URLs)
+                            stageApiUrl = setBaseUrl + `timeseries?name=${stageTsid}&begin=${currentDateTimeMinus30Hours.toISOString()}&end=${currentDateTimeMinus00Hours.toISOString()}&office=${office}`;
+                            netmissApiUrl = setBaseUrl + `timeseries?name=${netmissTsid}&begin=${currentDateTimeMinus00Hours.toISOString()}&end=${currentDateTimePlus168Hours.toISOString()}&office=${office}`;
+                        } else {
+                            console.error("Missing or incorrect assigned-time-series data", locData);
+                        }
 
-                                    if (netmissData.values) {
-                                        netmissData.values.forEach(entry => {
-                                            entry[0] = formatNWSDate(entry[0]);
-                                        });
-                                    }
+                        console.log("stageApiUrl: ", stageApiUrl);
 
-                                    if (nwsData.values) {
-                                        nwsData.values.forEach(entry => {
-                                            entry[0] = formatNWSDate(entry[0]);
-                                        });
-                                    }
+                        // Create the list of API URLs to fetch data
+                        const apiUrls = [];
 
-                                    // Append the fetched data to the locData
-                                    locData['stageData'] = stageData;
-                                    locData['netmissData'] = netmissData;
-                                    locData['nwsData'] = nwsData;
+                        if (stageApiUrl) apiUrls.push(fetch(stageApiUrl, { method: 'GET', headers: { 'Accept': 'application/json;version=2' } }).then(res => res.json()).catch(error => console.error(`Error fetching stage data for location ${locData['location-id']}:`, error)));
+                        if (netmissApiUrl) apiUrls.push(fetch(netmissApiUrl, { method: 'GET', headers: { 'Accept': 'application/json;version=2' } }).then(res => res.json()).catch(error => console.error(`Error fetching netmiss data for location ${locData['location-id']}:`, error)));
+                        // Proceed only if there are any valid API URLs
+                        if (apiUrls.length > 0) {
+                            additionalPromises.push(
+                                Promise.all(apiUrls)
+                                    .then(([stageData, netmissData]) => {
+                                        // Format dates for each of the datasets
+                                        if (stageData?.values) {
+                                            stageData.values.forEach(entry => entry[0] = formatNWSDate(entry[0]));
+                                        }
+                                        if (netmissData?.values) {
+                                            netmissData.values.forEach(entry => entry[0] = formatNWSDate(entry[0]));
+                                        }
 
-                                    // Execute the functions to find values and create the table
-                                    const stageValuesAtPreferredTimes = findValuesAtTimes(stageData);
-                                    // console.log('stageValuesAtPreferredTimes:', stageValuesAtPreferredTimes);
-                                    const netmissValuesAtPreferredTimes = findValuesAtTimes(netmissData);
-                                    // console.log('netmissValuesAtPreferredTimes:', netmissValuesAtPreferredTimes);
-                                    const nwsValuesAtPreferredTimes = findValuesAtTimes(nwsData);
-                                    // console.log('nwsValuesAtPreferredTimes:', nwsValuesAtPreferredTimes);
+                                        // Append the fetched data to locData
+                                        locData['stageData'] = stageData;
+                                        locData['netmissData'] = netmissData;
 
-                                    locData['stageDataPreferredTimes'] = stageValuesAtPreferredTimes;
-                                    locData['netmissDataPreferredTimes'] = netmissValuesAtPreferredTimes;
-                                    locData['nwsDataPreferredTimes'] = nwsValuesAtPreferredTimes;
-                                })
-                                .catch(error => {
-                                    console.error(`Error fetching additional data for location ${locData['location-id']}:`, error);
-                                })
-                        );
+                                        // Execute the functions to find values and create the table
+                                        const stageValuesAtPreferredTimes = findValuesAtTimes(stageData);
+                                        const netmissValuesAtPreferredTimes = findValuesAtTimes(netmissData);
+
+                                        locData['stageDataPreferredTimes'] = stageValuesAtPreferredTimes;
+                                        locData['netmissDataPreferredTimes'] = netmissValuesAtPreferredTimes;
+                                    })
+                                    .catch(error => {
+                                        console.error(`Error processing additional data for location ${locData['location-id']}:`, error);
+                                    })
+                            );
+                        }
                     }
 
                     // Wait for all additional data fetches to complete
@@ -290,11 +279,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                                 // Check if the location-id matches 'Cape Girardeau-Mississippi'
                                 if (location['location-id'] === "Cape Girardeau-Mississippi") {
                                     location['NWS'] = "KETHS";
-                                } else if (location['location-id'] === "LD 24 TW-Mississippi") {
+                                } else if (location['location-id'] === "LD 24 TW-Mississippi" || location['location-id'] === "LD 24 Pool-Mississippi") {
                                     location['NWS'] = "CLKM7";
-                                } else if (location['location-id'] === "LD 25 TW-Mississippi") {
+                                } else if (location['location-id'] === "LD 25 TW-Mississippi" || location['location-id'] === "LD 25 Pool-Mississippi") {
                                     location['NWS'] = "CAGM7";
-                                } else if (location['location-id'] === "Mel Price TW-Mississippi") {
+                                } else if (location['location-id'] === "Mel Price TW-Mississippi" || location['location-id'] === "Mel Price Pool-Mississippi") {
                                     location['NWS'] = "ALNI2";
                                 } else if (location['location-id'] === "St Louis-Mississippi") {
                                     location['NWS'] = "EADM7";
@@ -424,7 +413,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     function createParagraphs(data) {
         // Replace this with the ID or class of the container where paragraphs should go
         const container = document.getElementById('paragraphs_container'); // or use querySelector for other selectors
-    
+
         // Loop through the data and create a <span> tag for each entry
         data.forEach(entry => {
             entry['assigned-locations'].forEach(location => {
@@ -437,20 +426,25 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
                 const netmissValue = location.netmissDataPreferredTimes[0].values;
-    
+
                 // Create a span element and append the data
                 const span = document.createElement('span');
-                span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
-    
+                if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
+                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
+                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else {
+                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                }
                 // Append the span to the container
                 container.appendChild(span);
-    
+
                 // Create a line break and append it after the span
                 const lineBreak = document.createElement('br');
                 container.appendChild(lineBreak);
             });
         });
-    
+
         return container;
-    }    
+    }
 });
