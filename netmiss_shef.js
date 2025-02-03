@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const nws = location["NWS"];
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
-                const stageTime = formatDate(location.stageData.values[0][0]);
+                const stageTime = formatDate(location.stageDataPreferredTimes[0].values[0]['time']);
 
                 // Create a span element and append the data
                 const span = document.createElement('span');
@@ -479,6 +479,22 @@ document.addEventListener('DOMContentLoaded', async function () {
                 container.appendChild(lineBreak);
             });
         });
+
+        // Create a <p> element for the blank space at the top
+        const blankSpace = document.createElement('p');
+
+        // Create a <p> element for the link
+        const p = document.createElement('p');
+        const link = document.createElement('a');
+        link.href = "https://wm.mvs.ds.usace.army.mil/apps/netmiss_shef/netmiss_shef.txt";
+        link.textContent = "Click here for the NetMiss Shef Data";
+        link.target = "_blank"; // Open in a new tab
+        p.appendChild(link);
+
+        // Append the blank space and the <p> tags with the link to the container
+        container.appendChild(blankSpace); // Add the blank space at the top
+        container.appendChild(p);
+
 
         return container;
     }

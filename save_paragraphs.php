@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $paragraphs = $data['paragraphs'];
 
         // Open the file for writing (create it if it doesn't exist)
-        $file = fopen('netmiss_shef.txt', 'a'); // 'a' for append mode
+        $file = fopen('netmiss_shef.txt', 'w'); // 'a' for append mode // 'w' for write mode (clears the file)
 
         // Write each paragraph to the file
         foreach ($paragraphs as $paragraph) {
