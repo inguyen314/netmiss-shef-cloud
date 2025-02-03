@@ -491,9 +491,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         link.target = "_blank"; // Open in a new tab
         p.appendChild(link);
 
+        // Create a <p> element for the link
+        const p2 = document.createElement('p');
+        const link2 = document.createElement('a');
+        link2.href = "https://www.mvs-wc.usace.army.mil/netmiss_shef.txt";
+        link2.textContent = "Click here for the NetMiss Shef Data (Public Web Link)";
+        link2.target = "_blank"; // Open in a new tab
+        p2.appendChild(link2);
+
         // Append the blank space and the <p> tags with the link to the container
         container.appendChild(blankSpace); // Add the blank space at the top
         container.appendChild(p);
+        container.appendChild(p2);
 
 
         return container;
