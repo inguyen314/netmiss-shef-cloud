@@ -306,6 +306,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                     const table = createParagraphs(combinedData);
                     container.appendChild(table);
 
+                    createParagraphsPhp(combinedData);
+
                     loadingIndicator.style.display = 'none';
                 })
                 .catch(error => {
@@ -397,6 +399,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         return validValue ? (validValue.value).toFixed(1) : 'N/A';
     }
 
+    function getValidTime(data) {
+        // Get the first non-null value from the data array
+        const validTime = data.find(timeEntry => timeEntry.time !== null);
+        return validTime ? (validTime.time) : 'N/A';
+    }
+
     function formatDate(inputDate) {
         // Convert to Date object (assuming the format is MM-DD-YYYY HH:mm)
         const date = new Date(inputDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$2/$1/$3'));
@@ -418,23 +426,50 @@ document.addEventListener('DOMContentLoaded', async function () {
         data.forEach(entry => {
             entry['assigned-locations'].forEach(location => {
                 const nws = location["NWS"];
-                const nextDayForecast = formatDate(location.netmissData.values[0][0]);
-                console.log(location.netmissData.values.map(item => item[1]));
-                const netmissForecastValues = location.netmissData.values
-                    .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
-                    .join('/'); // Join the values with a forward slash
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
-                const netmissValue = location.netmissDataPreferredTimes[0].values;
+                const stageTime = formatDate(location.stageData.values[0][0]);
 
                 // Create a span element and append the data
                 const span = document.createElement('span');
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ********* ${locationId}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ********* ${locationId}`;
                 } else {
-                    span.textContent = `.ER ${nws} ${nextDayForecast}  Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ********* ${locationId}`;
+                }
+                // Append the span to the container
+                container.appendChild(span);
+
+                // Create a line break and append it after the span
+                const lineBreak = document.createElement('br');
+                container.appendChild(lineBreak);
+            });
+        });
+
+        // Create a line break and append it after the span
+        const lineBreak = document.createElement('br');
+        container.appendChild(lineBreak);
+
+        // Loop through the data and create a <span> tag for each entry
+        data.forEach(entry => {
+            entry['assigned-locations'].forEach(location => {
+                const nws = location["NWS"];
+                const nextDayForecastTime = formatDate(location.netmissData.values[0][0]);
+                const netmissForecastValues = location.netmissData.values
+                    .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
+                    .join('/'); // Join the values with a forward slash
+                const locationId = location["location-id"];
+
+                // Create a span element and append the data
+                const span = document.createElement('span');
+                if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else {
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
                 }
                 // Append the span to the container
                 container.appendChild(span);
@@ -446,5 +481,78 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
 
         return container;
+    }
+
+    function createParagraphsPhp(data) {
+        // Prepare data to send to PHP
+        const paragraphsData = [];
+
+        // Loop through the data and create paragraph text for stageData
+        data.forEach(entry => {
+            entry['assigned-locations'].forEach(location => {
+                const nws = location["NWS"];
+                const locationId = location["location-id"];
+                const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
+                const stageTime = formatDate(location.stageData.values[0][0]);
+
+                let paragraphText = '';
+                if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ********* ${locationId}`;
+                } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ********* ${locationId}`;
+                } else {
+                    paragraphText = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ********* ${locationId}`;
+                }
+
+                paragraphsData.push(paragraphText);
+            });
+        });
+
+        // Add a blank line after the first loop
+        paragraphsData.push(''); // This blank line will be added after the stageData loop
+
+        // Loop through the data for netmissData
+        data.forEach(entry => {
+            entry['assigned-locations'].forEach(location => {
+                const nws = location["NWS"];
+                const locationId = location["location-id"];
+                const nextDayForecastTime = formatDate(location.netmissData.values[0][0]);
+                const netmissForecastValues = location.netmissData.values
+                    .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
+                    .join('/'); // Join the values with a forward slash
+
+                let netmissText = '';
+                if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                } else {
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ********* ${locationId}`;
+                }
+
+                paragraphsData.push(netmissText);
+            });
+        });
+
+        // Add a blank line after the second loop
+        paragraphsData.push(''); // This blank line will be added after the netmissData loop
+
+        // Send the paragraphs data to the PHP script using fetch
+        fetch('save_paragraphs.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ paragraphs: paragraphsData }) // Send paragraphs data as a JSON object
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                alert('Data saved successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving data');
+            });
     }
 });
