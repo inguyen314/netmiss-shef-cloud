@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                             dataObj['assigned-locations'].forEach(location => {
                                 // Check if the location-id matches 'Cape Girardeau-Mississippi'
                                 if (location['location-id'] === "Cape Girardeau-Mississippi") {
-                                    location['NWS'] = "KETHS";
+                                    location['NWS'] = "CPGM7";
                                 } else if (location['location-id'] === "LD 24 TW-Mississippi" || location['location-id'] === "LD 24 Pool-Mississippi") {
                                     location['NWS'] = "CLKM7";
                                 } else if (location['location-id'] === "LD 25 TW-Mississippi" || location['location-id'] === "LD 25 Pool-Mississippi") {
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const nws = location["NWS"];
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
-                const stageTime = formatDate(location.stageDataPreferredTimes[0].values[0]['time']);
+                const stageTime = formatDateYYYYMMDD(location.stageDataPreferredTimes[0].values[0]['time']);
 
                 // const logTheLocation = `********* ${locationId}`;
                 const logTheLocation = ``;
@@ -436,11 +436,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                 // Create a span element and append the data
                 const span = document.createElement('span');
                 if (locationId === "LD 24 Pool-Mississippi" || locationId === "LD 25 Pool-Mississippi" || locationId === "Mel Price Pool-Mississippi") {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ${logTheLocation}`;
+                    span.textContent = `.A ${nws} ${stageTime} Z Z DH1200/HP ${stageValue} ${logTheLocation}`;
                 } else if (locationId === "LD 24 TW-Mississippi" || locationId === "LD 25 TW-Mississippi" || locationId === "Mel Price TW-Mississippi") {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ${logTheLocation}`;
+                    span.textContent = `.A ${nws} ${stageTime} Z Z DH1200/HT ${stageValue} ${logTheLocation}`;
                 } else {
-                    span.textContent = `.ER ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ${logTheLocation}`;
+                    span.textContent = `.A ${nws} ${stageTime} Z Z DH1200/HG ${stageValue} ${logTheLocation}`;
                 }
                 // Append the span to the container
                 container.appendChild(span);
@@ -459,11 +459,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         data.forEach(entry => {
             entry['assigned-locations'].forEach(location => {
                 const nws = location["NWS"];
-                const nextDayForecastTime = formatDate(location.netmissData.values[0][0]);
+                const nextDayForecastTime = formatDateYYYYMMDD(location.netmissData.values[0][0]);
                 const netmissForecastValues = location.netmissData.values
+                    .slice(0, 7) // Get only the first 7 values
                     .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
                     .join('/'); // Join the values with a forward slash
                 const locationId = location["location-id"];
+
+                console.log(netmissForecastValues);
+
+
 
                 // const logTheLocation = `********* ${locationId}`;
                 const logTheLocation = ``;
@@ -591,5 +596,17 @@ document.addEventListener('DOMContentLoaded', async function () {
                 console.error('Error:', error);
                 alert('Error saving data');
             });
+    }
+
+    function formatDateYYYYMMDD(timestamp) {
+        let [date, time] = timestamp.split(' ');
+        let [month, day, year] = date.split('-');
+        return `${year}${month}${day}`;
+    }
+
+    function formatDateYYYYDDMM(timestamp) {
+        let [date, time] = timestamp.split(' ');
+        let [month, day, year] = date.split('-');
+        return `${year}${month}${day}`;
     }
 });
