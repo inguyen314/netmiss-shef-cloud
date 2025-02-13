@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const nws = location["NWS"];
                 const locationId = location["location-id"];
                 const stageValue = getValidValue(location.stageDataPreferredTimes[0].values);
-                const stageTime = formatDate(location.stageDataPreferredTimes[0].values[0]['time']);
+                const stageTime = formatDateYYYYMMDD(location.stageDataPreferredTimes[0].values[0]['time']);
 
                 // const logTheLocation = `********* ${locationId}`;
                 const logTheLocation = ``;
@@ -554,13 +554,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         data.forEach(entry => {
             entry['assigned-locations'].forEach(location => {
                 const nws = location["NWS"];
-                const locationId = location["location-id"];
-                const nextDayForecastTime = formatDate(location.netmissData.values[0][0]);
+                const nextDayForecastTime = formatDateYYYYMMDD(location.netmissData.values[0][0]);
                 const netmissForecastValues = location.netmissData.values
+                    .slice(0, 7) // Get only the first 7 values
                     .map(item => item[1].toFixed(2)) // Format the numbers to two decimals
                     .join('/'); // Join the values with a forward slash
-
-                // const logTheLocation = `********* ${locationId}`;
+                const locationId = location["location-id"];
                 const logTheLocation = ``;
 
                 let netmissText = '';
