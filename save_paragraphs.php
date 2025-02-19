@@ -1,4 +1,8 @@
 <?php
+/*
+  Make sure the project folder is rwxrwxrwx
+*/
+
 require_once('../../php_data_api/private/initialize.php');
 // require_login();
 ini_set('display_errors', 1);
@@ -31,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $paragraphs = $data['paragraphs'];
 
         // Open the file for writing (create it if it doesn't exist)
-        $file = fopen('netmiss_shef.txt', 'w'); // 'a' for append mode // 'w' for write mode (clears the file)
+        $file = fopen('shef.txt', 'w'); // 'a' for append mode // 'w' for write mode (clears the file)
 
         // Write each paragraph to the file
         foreach ($paragraphs as $paragraph) {

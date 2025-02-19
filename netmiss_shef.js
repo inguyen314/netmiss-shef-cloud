@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Create a <p> element for the link
         const p = document.createElement('p');
         const link = document.createElement('a');
-        link.href = "https://wm.mvs.ds.usace.army.mil/apps/netmiss_shef/netmiss_shef.txt";
+        link.href = "shef.txt";
         link.textContent = "Click here for the NetMiss Shef Data";
         link.target = "_blank"; // Open in a new tab
         p.appendChild(link);
