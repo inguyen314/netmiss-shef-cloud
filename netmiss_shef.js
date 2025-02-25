@@ -753,7 +753,28 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Add a blank line after the second loop
     paragraphsData.push(""); // This blank line will be added after the netmissData loop
 
+    // Use CDA to write a file to a BLOB
+    // NOTE: https://cwms-data.usace.army.mil/cwms-data/blobs/NETMISS_SHEF.TXT?office=MVS
+    // curl -O https://cwms-data.usace.army.mil/cwms-data/blobs/NETMISS_SHEF.TXT?office=MVS
+    /*
+    fetch(`${setBaseUrl.replace(":8243", "")}blobs?fail-if-exists=false`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;version=2",
+        "cache-control": "no-cache",
+      },
+      body: JSON.stringify({
+        "office-id": office,
+        "media-type-id": "application/octet-stream",
+        "id": "NETMISS_SHEF.TXT",
+        "description": `Updated ${moment().format()}`,
+        "value": btoa(paragraphsData),
+      }),
+    });
+    */
+
     // Send the paragraphs data to the PHP script using fetch
+    
     fetch("save_paragraphs.php", {
       method: "POST",
       headers: {
@@ -770,6 +791,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error:", error);
         alert("Error saving data");
       });
+      
   }
 
   function formatDateYYYYMMDD(timestamp) {
