@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   let setBaseUrl = null;
   if (cda === "internal") {
-    setBaseUrl = `https://wm.${office.toLowerCase()}.ds.usace.army.mil:8243/${office.toLowerCase()}-data/`;
+    setBaseUrl = `https://wm.${office.toLowerCase()}.ds.usace.army.mil/${office.toLowerCase()}-data/`;
     console.log("setBaseUrl: ", setBaseUrl);
   } else if (cda === "public") {
     setBaseUrl = `https://cwms-data.usace.army.mil/cwms-data/`;
@@ -278,17 +278,22 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             console.log("stageApiUrl: ", stageApiUrl);
+            console.log("netmissApiUrl: ", netmissApiUrl);
 
             // Create the list of API URLs to fetch data
             const apiUrls = [];
 
-            if (stageApiUrl)
+            if (stageApiUrl) {
               apiUrls.push(
                 fetch(stageApiUrl, {
                   method: "GET",
                   headers: { Accept: "application/json;version=2" },
                 })
                   .then((res) => res.json())
+                  .then((data) => {
+                    console.log(`Stage data for location ${locData["location-id"]}:`, data);
+                    return data;
+                  })
                   .catch((error) =>
                     console.error(
                       `Error fetching stage data for location ${locData["location-id"]}:`,
@@ -296,13 +301,18 @@ document.addEventListener("DOMContentLoaded", async function () {
                     )
                   )
               );
-            if (netmissApiUrl)
+            }
+            if (netmissApiUrl) {
               apiUrls.push(
                 fetch(netmissApiUrl, {
                   method: "GET",
                   headers: { Accept: "application/json;version=2" },
                 })
                   .then((res) => res.json())
+                  .then((data) => {
+                    console.log(`Netmiss data for location ${locData["location-id"]}:`, data);
+                    return data;
+                  })
                   .catch((error) =>
                     console.error(
                       `Error fetching netmiss data for location ${locData["location-id"]}:`,
@@ -310,6 +320,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     )
                   )
               );
+            }            
             // Proceed only if there are any valid API URLs
             if (apiUrls.length > 0) {
               additionalPromises.push(
@@ -469,6 +480,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   };
 
   const findValuesAtTimes = (data) => {
+    console.log("data: ", data);
+
     const result = [];
     const currentDate = new Date();
 
@@ -774,7 +787,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     */
 
     // Send the paragraphs data to the PHP script using fetch
-    
+
     fetch("save_paragraphs.php", {
       method: "POST",
       headers: {
@@ -791,7 +804,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error:", error);
         alert("Error saving data");
       });
-      
+
   }
 
   function formatDateYYYYMMDD(timestamp) {
