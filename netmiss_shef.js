@@ -8,16 +8,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   let setBaseUrl = null;
   if (cda === "internal") {
     setBaseUrl = `https://wm.${office.toLowerCase()}.ds.usace.army.mil/${office.toLowerCase()}-data/`;
-    console.log("setBaseUrl: ", setBaseUrl);
   } else if (cda === "public") {
     setBaseUrl = `https://cwms-data.usace.army.mil/cwms-data/`;
-    console.log("setBaseUrl: ", setBaseUrl);
   }
+  console.log("setBaseUrl: ", setBaseUrl);
 
-  const apiUrl =
-    setBaseUrl +
-    `location/group?office=${office}&include-assigned=false&location-category-like=${setCategory}`;
-  // console.log("apiUrl: ", apiUrl);
+  const apiUrl = setBaseUrl + `location/group?office=${office}&group-office-id=${office}&category-office-id=${office}&category-id=${setCategory}`;
+  console.log("apiUrl: ", apiUrl);
 
   const netmissTsidMap = new Map();
   const metadataMap = new Map();
@@ -244,7 +241,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
           });
 
-          // console.log('combinedData:', combinedData);
+          console.log('combinedData:', combinedData);
 
           // Fetch additional data using stageTsid, netmissTsid, nwsTsid
           const additionalPromises = [];
