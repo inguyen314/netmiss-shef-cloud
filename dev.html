@@ -54,6 +54,9 @@
 
     var template_id = urlParams.get('template_id') || null;
     console.log('template_id: ', template_id);
+
+    var json = urlParams.get('json') || "true";
+    console.log('json: ', json);
 </script>
 
 <head>
@@ -68,10 +71,10 @@
     <link rel="stylesheet" href="css/sidebar.css" />
     <link rel="stylesheet" href="css/style.css" />
     <script src="js/main.js"></script>
-    <script src="js/libraries/moment.min.js"></script>
-    <script src="js/libraries/moment-timezone-with-data.js"></script>
-    <script src="js/libraries/chart.js"></script>
-    <script src="js/libraries/chartjs-adapter-moment.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/moment-timezone-with-data.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/chartjs-adapter-moment.min.js"></script>
 </head>
 
 <body>
@@ -93,13 +96,13 @@
                             </h2>
                             <div class="box-content" style="background-color:white;margin:auto">
                                 <div class="content">
+                                    <!-- Start Div -->
                                     <div id="loading" style="display: none;"><img src="images/loading4.gif"
                                             style='height: 50px; width: 50px;' alt="Loading..." /></div>
                                     <div id="table_container"></div>
                                     <div id="paragraphs_container"></div>
-                                    <script src="js/netmiss_shef_dev.js"></script>
-                                    <div class="status"></div>
-                                    <button id="cda-btn" disabled>Login</button>
+                                    <script src="dev.js"></script>
+                                    <!-- End Div -->
                                 </div>
                             </div>
                         </div>
