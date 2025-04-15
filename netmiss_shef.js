@@ -495,15 +495,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                     locationId === "LD 25 Pool-Mississippi" ||
                     locationId === "Mel Price Pool-Mississippi"
                 ) {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues.join('/')} ${logTheLocation}`;
                 } else if (
                     locationId === "LD 24 TW-Mississippi" ||
                     locationId === "LD 25 TW-Mississippi" ||
                     locationId === "Mel Price TW-Mississippi"
                 ) {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues.join('/')} ${logTheLocation}`;
                 } else {
-                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    span.textContent = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues.join('/')}${logTheLocation}`;
                 }
                 // Append the span to the container
                 container.appendChild(span);
@@ -520,15 +520,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                     locationId === "LD 25 Pool-Mississippi" ||
                     locationId === "Mel Price Pool-Mississippi"
                 ) {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HPIF/DID1/${netmissForecastValues.join('/')} ${logTheLocation}`;
                 } else if (
                     locationId === "LD 24 TW-Mississippi" ||
                     locationId === "LD 25 TW-Mississippi" ||
                     locationId === "Mel Price TW-Mississippi"
                 ) {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HTIF/DID1/${netmissForecastValues.join('/')} ${logTheLocation}`;
                 } else {
-                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues} ${logTheLocation}`;
+                    netmissText = `.ER ${nws} ${nextDayForecastTime} Z DH1200/HGIF/DID1/${netmissForecastValues.join('/')} ${logTheLocation}`;
                 }
 
                 paragraphsData.push(netmissText);
